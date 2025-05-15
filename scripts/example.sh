@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '{"age": 30, "sex": "male", "bmi": 25.0, "children": 1, "smoker": "no", "region": "northeast", "model": "random_forest"}' http://localhost:5005/predict

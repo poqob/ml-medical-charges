@@ -1,9 +1,11 @@
 import joblib
 import pandas as pd
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory
+import os
 
-app = Flask(__name__)
+# Flask uygulamasını static klasörü kullanarak yapılandırma
+app = Flask(__name__, static_folder="static", static_url_path="/static")
 
 # Modelleri yükle
 try:
@@ -47,6 +49,11 @@ def predict_medical_charge(sample, model):
     # Tahmin
     prediction = model.predict(df_sample)[0]
     return prediction
+
+@app.route('/')
+def index():
+    """Ana sayfa"""
+    return send_from_directory('static', 'index.html')
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -173,5 +180,10 @@ def predict_batch():
     return jsonify(response)
 
 if __name__ == "__main__":
-    print("Sağlık Sigortası Ücret Tahmini API'si başlatılıyor...")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("Sağlık Sigortası Ücret Tahmini API'si ve Web Arayüzü başlatılıyor...")
+    # CORS desteği ekle (web sitesinden API'ye istek gönderebilmek için)
+    from flask_cors import CORS
+    CORS(app)
+    print("Web arayüzü: http://localhost:5005")
+    print("API endpoint: http://localhost:5005/predict")
+    app.run(debug=True, host='0.0.0.0', port=5005)

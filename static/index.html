@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sağlık Sigortası Ücret Tahmini</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="static/logo.png" type="image/png">
+    <style>
+        :root {
+            --primary-color: #4A6FDC;
+            --secondary-color: #3D5AC8;
+            --accent-color: #F8D57E;
+            --text-color: #2E3856;
+            --light-color: #F8F9FE;
+            --gray-color: #E4E8F7;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+        
+        .hero {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 2.5rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            color: #6B7193;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .calculator {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid var(--gray-color);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: var(--text-color);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 220, 0.15);
+        }
+        
+        .btn-calculate {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-calculate:hover, .btn-calculate:focus {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 111, 220, 0.2);
+        }
+        
+        .result {
+            display: none;
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        .result h3 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .result .amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .result .details {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+        }
+        
+        .result .model-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #6B7193;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        footer {
+            background-color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            color: #6B7193;
+        }
+        
+        .error-message {
+            display: none;
+            background-color: #FEE7E7;
+            border-left: 5px solid #F56565;
+            color: #C53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero, .calculator {
+                padding: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-heartbeat me-2"></i>Sağlık sigortası Ücret Tahmini
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>Sağlık Sigortası Ücret Tahmini</h1>
+                    <p>Kişisel bilgilerinize dayanarak sağlık sigortası maliyetinizi tahmin edin. Makine öğrenimi modellerimiz, binlerce gerçek veri noktası üzerinde eğitilmiştir.</p>
+                </div>
+                <div class="col-md-4 text-end d-none d-md-block">
+                    <img src="static/logo.png" alt="Sağlık Sigortası İkonu" class="img-fluid" style="max-width: 150px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator">
+            <h2 class="mb-4">Sigorta Ücret Hesaplayıcı</h2>
+            
+            <form id="calculatorForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="age" class="form-label">Yaş</label>
+                        <input type="number" class="form-control" id="age" name="age" min="18" max="100" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="sex" class="form-label">Cinsiyet</label>
+                        <select class="form-select" id="sex" name="sex" required>
+                            <option value="" selected disabled>Seçiniz</option>
+                            <option value="male">Erkek</option>
+                            <option value="female">Kadın</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="bmi" class="form-label">Vücut Kitle İndeksi (BMI)</label>
+                        <input type="number" class="form-control" id="bmi" name="bmi" step="0.1" min="10" max="50" required>
+                        <div class="form-text">Normal BMI aralığı 18.5 - 24.9'dur.</div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="children" class="form-label">Çocuk Sayısı</label>
+                        <input type="number" class="form-control" id="children" name="children" min="0" max="10" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="smoker" class="form-label">Sigara Kullanımı</label>
+                        <select class="form-select" id="smoker" name="smoker" required>
+                            <option value="" selected disabled>Seçiniz</option>
+                            <option value="yes">Evet</option>
+                            <option value="no">Hayır</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="region" class="form-label">Bölge</label>
+                        <select class="form-select" id="region" name="region" required>
+                            <option value="" selected disabled>Seçiniz</option>
+                            <option value="northeast">Kuzeydoğu</option>
+                            <option value="northwest">Kuzeybatı</option>
+                            <option value="southeast">Güneydoğu</option>
+                            <option value="southwest">Güneybatı</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col-md-6 mb-3">
+                        <label for="model" class="form-label">Tahmin Modeli</label>
+                        <select class="form-select" id="model" name="model" required>
+                            <option value="random_forest" selected>Random Forest (Daha yüksek doğruluk)</option>
+                            <option value="linear_regression">Linear Regression (Daha basit model)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span id="errorText">Bir hata oluştu.</span>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-calculate">
+                        <i class="fas fa-calculator me-2"></i>Ücreti Hesapla
+                    </button>
+                </div>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner-border spinner text-primary" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                <p class="mt-2">Tahmin yapılıyor...</p>
+            </div>
+            
+            <div class="result" id="result">
+                <h3>Tahmin Edilen Sigorta Ücreti</h3>
+                <div class="amount" id="predictedAmount">$0.00</div>
+                
+                <div class="details">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Yaş:</strong> <span id="resultAge">-</span></p>
+                            <p><strong>Cinsiyet:</strong> <span id="resultSex">-</span></p>
+                            <p><strong>BMI:</strong> <span id="resultBmi">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Çocuk Sayısı:</strong> <span id="resultChildren">-</span></p>
+                            <p><strong>Sigara Kullanımı:</strong> <span id="resultSmoker">-</span></p>
+                            <p><strong>Bölge:</strong> <span id="resultRegion">-</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="model-info">
+                    <i class="fas fa-info-circle me-1"></i>
+                    <span id="modelInfo">Random Forest modeli kullanıldı.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="text-center">
+                <p class="mb-0">© 2025 MediCost Predictor | Sağlık Sigortası Ücret Tahmin Aracı</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculatorForm = document.getElementById('calculatorForm');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            calculatorForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Formu gizle, yükleme göster
+                loading.style.display = 'block';
+                result.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                // Form verilerini al
+                const formData = {
+                    age: parseInt(document.getElementById('age').value),
+                    sex: document.getElementById('sex').value,
+                    bmi: parseFloat(document.getElementById('bmi').value),
+                    children: parseInt(document.getElementById('children').value),
+                    smoker: document.getElementById('smoker').value,
+                    region: document.getElementById('region').value,
+                    model: document.getElementById('model').value
+                };
+                
+                // API isteği
+                fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Tahmin yapılırken bir hata oluştu.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Yüklemeyi gizle, sonucu göster
+                    loading.style.display = 'none';
+                    result.style.display = 'block';
+                    
+                    // Sonuçları doldur
+                    document.getElementById('predictedAmount').textContent = '$' + data.predicted_charge.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    document.getElementById('resultAge').textContent = data.input_data.age;
+                    document.getElementById('resultSex').textContent = data.input_data.sex === 'male' ? 'Erkek' : 'Kadın';
+                    document.getElementById('resultBmi').textContent = data.input_data.bmi;
+                    document.getElementById('resultChildren').textContent = data.input_data.children;
+                    document.getElementById('resultSmoker').textContent = data.input_data.smoker === 'yes' ? 'Evet' : 'Hayır';
+                    
+                    // Bölge çevirisi
+                    let region = '';
+                    switch(data.input_data.region) {
+                        case 'northeast': region = 'Kuzeydoğu'; break;
+                        case 'northwest': region = 'Kuzeybatı'; break;
+                        case 'southeast': region = 'Güneydoğu'; break;
+                        case 'southwest': region = 'Güneybatı'; break;
+                        default: region = data.input_data.region;
+                    }
+                    document.getElementById('resultRegion').textContent = region;
+                    
+                    // Model bilgisi
+                    const modelText = data.model_used === 'random_forest' ? 
+                        'Random Forest modeli kullanıldı.' : 
+                        'Linear Regression modeli kullanıldı.';
+                    document.getElementById('modelInfo').textContent = modelText;
+                    
+                    // Sonuca kaydır
+                    result.scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(error => {
+                    // Hata göster
+                    loading.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    document.getElementById('errorText').textContent = error.message;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
