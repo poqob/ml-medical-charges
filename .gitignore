@@ -2,4 +2,3 @@
 /output/*
 /.env
 /.env.local
-/models/*
